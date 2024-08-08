@@ -4,7 +4,6 @@ import (
 	"io"
 	"log"
 
-	"net/http"
 	"os"
 	"time"
 
@@ -33,15 +32,18 @@ func main() {
 
 	log.Printf("Using token: %s", token)
 	bot, err := gotgbot.NewBot(token, &gotgbot.BotOpts{
-		BotClient: &gotgbot.BaseBotClient{
-			Client: http.Client{},
-			DefaultRequestOpts: &gotgbot.RequestOpts{
-				Timeout: gotgbot.DefaultTimeout, // Customise the default request timeout here
-				APIURL:  gotgbot.DefaultAPIURL,  // As well as the Default API URL here (in case of using local bot API servers)
-			},
-		},
+		BotClient: tgbot.NewSendWithoutReplyClient(),
 	})
-
+	// bot, err := gotgbot.NewBot(token, &gotgbot.BotOpts{
+	// 	BotClient: &gotgbot.BaseBotClient{
+	// 		Client: http.Client{},
+	// 		DefaultRequestOpts: &gotgbot.RequestOpts{
+	// 			Timeout: gotgbot.DefaultTimeout, // Customise the default request timeout here
+	// 			APIURL:  gotgbot.DefaultAPIURL,  // As well as the Default API URL here (in case of using local bot API servers)
+	// 		},
+	// 	},
+	// })
+	//
 	if err != nil {
 		log.Fatalf("Failed to create new bot: %s", err.Error())
 	}

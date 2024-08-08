@@ -21,7 +21,8 @@ func GetArtistIdByName(name string, db *sql.DB) (string, error) {
 		field = "amharic_name"
 	}
 
-	err = db.QueryRow(fmt.Sprintf(`SELECT id FROM artists WHERE LOWER(%s) = LOWER(?)`, field), name).Scan(&artistId)
+	err = db.QueryRow(fmt.Sprintf(`SELECT id FROM artists WHERE LOWER(%s) = LOWER(?)`, field), name).
+		Scan(&artistId)
 	if artistId == "" {
 		err = db.QueryRow(fmt.Sprintf(`SELECT id FROM artists WHERE %s LIKE ? OR name LIKE ?`, field), field, name+" %", "% "+name).
 			Scan(&artistId)
@@ -357,4 +358,16 @@ func GetLanguage(chatId int64, db *sql.DB) (string, error) {
 	}
 
 	return language, nil
+}
+
+func IncreaseCountUsers(chatId string) {
+	db := GetDB()
+	defer db.Close()
+
+	var count int
+	err := db.QueryRow(`SELECT * FROM counter WHERE chat_id = ?`, chatId).
+		Scan(&count)
+	if err != nil {
+		db.Exec(`INSERT INTO counter (chat_id) VALUES (?)`, chatId)
+	}
 }
