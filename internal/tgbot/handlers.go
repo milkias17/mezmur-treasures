@@ -115,7 +115,7 @@ func (c *Client) ListArtists(b *gotgbot.Bot, ctx *ext.Context) error {
 		})
 	}
 
-	if page.(int) < len(artists) {
+	if page.(int)+1*PAGE_SIZE < len(artists) {
 		btns[len(btns)-1] = append(btns[len(btns)-1], gotgbot.InlineKeyboardButton{
 			Text:         GetTranslation("Next", ctx, c),
 			CallbackData: fmt.Sprintf("page_artist:next"),
@@ -164,7 +164,11 @@ func (c *Client) PaginateArtists(b *gotgbot.Bot, ctx *ext.Context) error {
 
 	btns := make([][]gotgbot.InlineKeyboardButton, 0)
 	start := (PAGE_SIZE + 1) * (page.(int) - 1)
-	for i, artist := range artists[(PAGE_SIZE+1)*(page.(int)-1) : start+PAGE_SIZE+1] {
+	end := start + PAGE_SIZE + 1
+	if end > len(artists) {
+		end = len(artists)
+	}
+	for i, artist := range artists[start:end] {
 		btns = append(btns, []gotgbot.InlineKeyboardButton{{
 			Text:         fmt.Sprintf("%d. %s", (PAGE_SIZE+1)*(page.(int)-1)+i+1, artist.Name),
 			CallbackData: fmt.Sprintf("artist:%s", artist.ID),
@@ -180,7 +184,7 @@ func (c *Client) PaginateArtists(b *gotgbot.Bot, ctx *ext.Context) error {
 		})
 	}
 
-	if page.(int) < len(artists) {
+	if (page.(int)+1)*PAGE_SIZE < len(artists) {
 		btns[len(btns)-1] = append(btns[len(btns)-1], gotgbot.InlineKeyboardButton{
 			Text:         GetTranslation("Next", ctx, c),
 			CallbackData: fmt.Sprintf("page_artist:next"),
@@ -386,7 +390,7 @@ func (c *Client) GetLyrics(b *gotgbot.Bot, ctx *ext.Context) error {
 	)
 	text += track.Track.Lyrics
 	err = sendMessage(b, ctx, text, nil, &gotgbot.SendMessageOpts{
-		ParseMode: gotgbot.ParseModeHTML,
+		ParseMode:   gotgbot.ParseModeHTML,
 		ReplyMarkup: getHomeKeyboard("home", makeGetTranslation(ctx, c)),
 	})
 
