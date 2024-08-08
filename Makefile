@@ -3,6 +3,9 @@ ARTIFACT_NAME := tgbot
 build:
 	@go build -o bin/${ARTIFACT_NAME}/${ARTIFACT_NAME} cmd/${ARTIFACT_NAME}/main.go 
 
+run-build:
+	bin/${ARTIFACT_NAME}/${ARTIFACT_NAME}
+
 # run:
 # 	@go run cmd/${ARTIFACT_NAME}/main.go
 
