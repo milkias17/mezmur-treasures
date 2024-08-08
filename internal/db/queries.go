@@ -14,11 +14,17 @@ func GetArtistIdByName(name string, db *sql.DB) (string, error) {
 
 	var artistId string
 	var err error
+	var field string
 	if isEnglish(name) {
-		err = db.QueryRow(`SELECT id FROM artists WHERE name LIKE ? OR name LIKE ?`, name+" %", "% "+name).
-			Scan(&artistId)
+		field = "name"
 	} else {
-		err = db.QueryRow(`SELECT id FROM artists WHERE amharic_name LIKE ?`, "%"+name+"%").Scan(&artistId)
+		field = "amharic_name"
+	}
+
+	err = db.QueryRow(fmt.Sprintf(`SELECT id FROM artists WHERE LOWER(%s) = LOWER(?)`, field), name).Scan(&artistId)
+	if artistId == "" {
+		err = db.QueryRow(fmt.Sprintf(`SELECT id FROM artists WHERE %s LIKE ? OR name LIKE ?`, field), field, name+" %", "% "+name).
+			Scan(&artistId)
 	}
 
 	if err != nil {
@@ -34,7 +40,6 @@ func GetArtistByName(name string, db *sql.DB) (Artist, error) {
 		fmt.Println("Passed nil db")
 		defer db.Close()
 	}
-
 
 	var artist Artist
 	err := db.QueryRow(`SELECT * FROM artists WHERE name = ?`, name).

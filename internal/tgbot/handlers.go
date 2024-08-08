@@ -67,7 +67,7 @@ func getHomeKeyboard(page string, getTranslation func(string) string) *gotgbot.R
 const PAGE_SIZE = 10
 
 func (c *Client) GetArtist(b *gotgbot.Bot, ctx *ext.Context) error {
-	err := sendMessage(b, ctx, "Enter Name of Artist:", nil, nil)
+	_, err := ctx.Message.Reply(b, GetTranslation("Enter Name of Artist", ctx, c), nil)
 
 	if err != nil {
 		log.Printf("Failed to send message: %s", err.Error())
