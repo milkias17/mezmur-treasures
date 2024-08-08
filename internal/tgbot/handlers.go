@@ -387,6 +387,7 @@ func (c *Client) GetLyrics(b *gotgbot.Bot, ctx *ext.Context) error {
 	text += track.Track.Lyrics
 	err = sendMessage(b, ctx, text, nil, &gotgbot.SendMessageOpts{
 		ParseMode: gotgbot.ParseModeHTML,
+		ReplyMarkup: getHomeKeyboard("home", makeGetTranslation(ctx, c)),
 	})
 
 	if err != nil {
