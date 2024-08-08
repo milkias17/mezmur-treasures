@@ -1,12 +1,12 @@
 package main
 
 import (
+	"io"
 	"log"
+
 	"net/http"
 	"os"
 	"time"
-
-	// "time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	"github.com/PaulSonOfLars/gotgbot/v2/ext"
@@ -128,18 +128,25 @@ func main() {
 			log.Fatalf("Failed to start webhook: %s\n", err.Error())
 		}
 
+		inputFile, err := os.Open(os.Getenv("WEBHOOK_CERT_FILE"))
+		if err != nil {
+			log.Fatalf("Failed to open certificate file: %s\n", err.Error())
+		}
+		defer inputFile.Close()
+		reader := io.Reader(inputFile)
+
 		err = updater.SetAllBotWebhooks(webhookDomain, &gotgbot.SetWebhookOpts{
 			MaxConnections:     100,
 			DropPendingUpdates: false,
 			SecretToken:        os.Getenv("WEBHOOK_SECRET"),
+			Certificate:        gotgbot.InputFileByReader(os.Getenv("WEBHOOK_CERT_FILE"), reader),
 		})
 
 		if err != nil {
 			log.Fatalf("Failed to set webhooks: %s\n", err.Error())
 		}
+		log.Printf("%s has been started as webhook....\n", bot.User.Username)
 	}
-
-	log.Printf("%s has been started....\n", bot.User.Username)
 
 	updater.Idle()
 
