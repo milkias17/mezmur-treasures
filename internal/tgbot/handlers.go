@@ -93,7 +93,12 @@ func (c *Client) ListArtists(b *gotgbot.Bot, ctx *ext.Context) error {
 		userLang = "en"
 	}
 
-	for i, artist := range artists[:PAGE_SIZE+1] {
+	start := (PAGE_SIZE + 1) * (page.(int) - 1)
+	end := start + PAGE_SIZE + 1
+	if end > len(artists) {
+		end = len(artists)
+	}
+	for i, artist := range artists[start:end] {
 		var artistName string
 		if userLang == "am" {
 			artistName = artist.AmharicName
