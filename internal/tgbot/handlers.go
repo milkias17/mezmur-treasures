@@ -330,6 +330,19 @@ func (c *Client) ListTracks(b *gotgbot.Bot, ctx *ext.Context) error {
 		}})
 	}
 
+	artistId, err := db.GetArtistIdByAlbum(albumId, c.db)
+	if err != nil {
+		log.Printf("Error getting artist id: %s", err)
+		return err
+	}
+
+	btns = append(btns, []gotgbot.InlineKeyboardButton{
+		{
+			Text:         GetTranslation("Back", ctx, c),
+			CallbackData: fmt.Sprintf("artist:%s", artistId),
+		},
+	})
+
 	opts := &gotgbot.EditMessageTextOpts{
 		ReplyMarkup: gotgbot.InlineKeyboardMarkup{
 			InlineKeyboard: btns,

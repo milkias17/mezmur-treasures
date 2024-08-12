@@ -5,6 +5,23 @@ import (
 	"fmt"
 )
 
+func GetArtistIdByAlbum(albumID string, db *sql.DB) (string, error) {
+	if db == nil { db = GetDB()
+		fmt.Println("Passed nil db")
+		defer db.Close()
+	}
+
+	var artistId string
+	err := db.QueryRow(`SELECT artist_id FROM albums WHERE id = ?`, albumID).
+		Scan(&artistId)
+
+	if err != nil {
+		return "", err
+	}
+
+	return artistId, nil
+}
+
 func GetArtistIdByName(name string, db *sql.DB) (string, error) {
 	if db == nil {
 		db = GetDB()
