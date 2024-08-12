@@ -386,5 +386,7 @@ func IncreaseCountUsers(chatId string) {
 		Scan(&count)
 	if err != nil {
 		db.Exec(`INSERT INTO counter (chat_id) VALUES (?)`, chatId)
-	}
+	} else {
+        db.Exec(`UPDATE counter SET count = count + 1 WHERE chat_id = ?`, chatId)
+    }
 }
