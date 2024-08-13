@@ -6,7 +6,8 @@ import (
 )
 
 func GetArtistIdByAlbum(albumID string, db *sql.DB) (string, error) {
-	if db == nil { db = GetDB()
+	if db == nil {
+		db = GetDB()
 		fmt.Println("Passed nil db")
 		defer db.Close()
 	}
@@ -385,8 +386,8 @@ func IncreaseCountUsers(chatId string) {
 	err := db.QueryRow(`SELECT * FROM counter WHERE chat_id = ?`, chatId).
 		Scan(&count)
 	if err != nil {
-		db.Exec(`INSERT INTO counter (chat_id) VALUES (?)`, chatId)
+		db.Exec(`INSERT INTO counter (chat_id, count) VALUES (?, 1)`, chatId)
 	} else {
-        db.Exec(`UPDATE counter SET count = count + 1 WHERE chat_id = ?`, chatId)
-    }
+		db.Exec(`UPDATE counter SET count = count + 1 WHERE chat_id = ?`, chatId)
+	}
 }
