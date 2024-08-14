@@ -383,7 +383,7 @@ func IncreaseCountUsers(chatId string) {
 	defer db.Close()
 
 	var count int
-	err := db.QueryRow(`SELECT * FROM counter WHERE chat_id = ?`, chatId).
+	err := db.QueryRow(`SELECT count FROM counter WHERE chat_id = ?`, chatId).
 		Scan(&count)
 	if err != nil {
 		db.Exec(`INSERT INTO counter (chat_id, count) VALUES (?, 1)`, chatId)
